@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { INIT_GAME } from "./Messages";
+import { INIT_GAME, MOVE } from "./Messages";
 import { Game } from "./Game";
 
 export class GameManager {
@@ -21,7 +21,7 @@ export class GameManager {
   }
   private addHandler(socket: WebSocket) {
     socket.on("message", (data) => {
-      // idk why i got error beacuse i didn't used arrow function ??????
+      // TODO:  idk why i got error because i didn't used arrow function ??????
       const message = JSON.parse(data.toString());
 
       if (message.type === INIT_GAME) {
@@ -31,6 +31,14 @@ export class GameManager {
           this.pendingUser = null;
         } else {
           this.pendingUser = socket;
+        }
+      }
+      if (message.type === MOVE) {
+        const game = this.games.find(
+          (game) => game.player1 === socket || game.player2 === socket
+        );
+        if (game) {
+          game.makeMove(socket, message.move);
         }
       }
     });
