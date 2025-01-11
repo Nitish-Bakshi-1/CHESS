@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
+import { GAME_OVER } from "./Messages";
 
 export class Game {
   public player1: WebSocket;
@@ -13,5 +14,25 @@ export class Game {
     this.board = new Chess();
     this.startTime = new Date();
   }
-  makeMove(socket: WebSocket, move: { from: string; to: string }) {}
+  makeMove(socket: WebSocket, move: { from: string; to: string }) {
+    if (this.board.moves.length % 2 === 0 && socket != this.player1) {
+      return;
+    }
+    if (this.board.move.length % 2 === 1 && socket != this.player2) {
+      return;
+    }
+    try {
+      this.board.move(move);
+    } catch (e) {
+      return;
+    }
+    if (this.board.isGameOver()) {
+      this.player1.emit(
+        JSON.stringify({
+          type: GAME_OVER,
+        })
+      );
+      return;
+    }
+  }
 }
