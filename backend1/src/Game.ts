@@ -34,16 +34,17 @@ export class Game {
     if (this.board.moves.length % 2 === 0 && socket != this.player1) {
       return;
     }
-    if (this.board.move.length % 2 === 1 && socket != this.player2) {
+    if (this.board.moves.length % 2 === 1 && socket != this.player2) {
       return;
     }
+
     try {
-      this.board.move(move);
+      this.board.move({ from: move.from, to: move.to });
     } catch (e) {
       console.log(e);
-
       return;
     }
+
     if (this.board.isGameOver()) {
       this.player1.send(
         JSON.stringify({

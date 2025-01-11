@@ -23,22 +23,19 @@ class Game {
         }));
     }
     makeMove(socket, move) {
-        console.log(1);
         if (this.board.moves.length % 2 === 0 && socket != this.player1) {
             return;
         }
-        if (this.board.move.length % 2 === 1 && socket != this.player2) {
+        if (this.board.moves.length % 2 === 1 && socket != this.player2) {
             return;
         }
-        console.log(2);
         try {
-            this.board.move(move);
+            this.board.move({ from: move.from, to: move.to });
         }
         catch (e) {
             console.log(e);
             return;
         }
-        console.log(3);
         if (this.board.isGameOver()) {
             this.player1.send(JSON.stringify({
                 type: Messages_1.GAME_OVER,
@@ -55,7 +52,6 @@ class Game {
             }));
             return;
         }
-        console.log(4);
         if (this.board.moves.length % 2 === 0) {
             this.player2.send(JSON.stringify({
                 type: Messages_1.MOVE,
@@ -68,7 +64,6 @@ class Game {
                 payload: move,
             }));
         }
-        console.log(5);
     }
 }
 exports.Game = Game;
