@@ -82,3 +82,4 @@ export class Game {
     }
   }
 }
+console.log("$");
