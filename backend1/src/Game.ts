@@ -40,7 +40,7 @@ export class Game {
     }
 
     try {
-      this.board.move({ from: move.from, to: move.to });
+      this.board.move(move);
     } catch (e) {
       console.log(e);
       return;

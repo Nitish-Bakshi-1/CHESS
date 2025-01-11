@@ -22,14 +22,15 @@ const Game = () => {
         case INIT_GAME:
           setChess(new Chess());
           setBoard(chess.board());
-          console.log("Game initialized");
           break;
+
         case MOVE:
           const move = message.payload;
           chess.move(move);
           setBoard(chess.board);
           console.log("Move made");
           break;
+
         case GAME_OVER:
           console.log("Game over");
           break;
@@ -45,7 +46,12 @@ const Game = () => {
       <div className="pt-8 max-w-screen-lg w-full">
         <div className="grid grid-cols-6 gap-4 w-full">
           <div className="col-span-4 w-full flex justify-center">
-            <ChessBoard board={board} socket={socket} />
+            <ChessBoard
+              chess={chess}
+              board={board}
+              socket={socket}
+              setBoard={setBoard}
+            />
           </div>
           <div className="col-span-2 w-full h-full flex justify-center items-center">
             <Button
