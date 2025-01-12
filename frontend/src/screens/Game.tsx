@@ -12,35 +12,51 @@ const Game = () => {
   const socket = useSockets();
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
+
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
-    socket.onmessage = (event) => {
+    if (!socket) return;
+
+    const handleMessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
+
       switch (message.type) {
         case INIT_GAME:
-          setChess(new Chess());
-          setBoard(chess.board());
+          const newChess = new Chess();
+          setChess(newChess);
+          setBoard(newChess.board());
           break;
 
         case MOVE:
           const move = message.payload;
-          chess.move(move);
-          setBoard(chess.board);
-          console.log("Move made");
+          if (chess.move(move)) {
+            setBoard(chess.board());
+            console.log("Move made");
+          } else {
+            console.error("Invalid move");
+          }
           break;
 
         case GAME_OVER:
           console.log("Game over");
           break;
+
+        default:
+          console.warn("Unknown message type:", message.type);
       }
     };
-  }, [socket]);
+
+    socket.onmessage = handleMessage;
+
+    // Cleanup function to avoid memory leaks
+    return () => {
+      socket.onmessage = null;
+    };
+  }, [socket, chess]);
 
   if (!socket) {
     return <div>Connecting...</div>;
   }
+
   return (
     <div className="flex justify-center">
       <div className="pt-8 max-w-screen-lg w-full">
